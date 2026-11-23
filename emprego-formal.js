@@ -6,6 +6,8 @@
   let rows = [];
   let chart = null;
   const labels = {balance:"Saldo de empregos",admissions:"Admissões",dismissals:"Desligamentos",stock:"Estoque"};
+  const validNumber = value => value !== null && value !== undefined && value !== "" && Number.isFinite(Number(value));
+  const display = value => validNumber(value) ? fmt.format(Number(value)) : "—";
   const monthLabel = value => {
     const d = new Date(value + "T12:00:00");
     return Number.isNaN(d.getTime()) ? value : new Intl.DateTimeFormat("pt-BR",{month:"short",year:"numeric"}).format(d);
@@ -14,17 +16,24 @@
     const start = $("period-start").value, end = $("period-end").value;
     return rows.filter(r => (!start || r.period >= start) && (!end || r.period <= end));
   };
-  const sum = (list,key) => list.reduce((a,r)=>a+(Number(r[key])||0),0);
+  const sum = (list,key) => {
+    const values = list.map(r=>r[key]).filter(validNumber);
+    return values.length ? values.reduce((a,v)=>a+Number(v),0) : null;
+  };
   const show = () => {
     const list = filtered();
     const metric = $("indicator-select").value;
     $("chart-title").textContent = "Evolução: " + labels[metric];
-    $("kpi-admissions").textContent = fmt.format(sum(list,"admissions"));
-    $("kpi-dismissals").textContent = fmt.format(sum(list,"dismissals"));
-    $("kpi-balance").textContent = fmt.format(sum(list,"balance"));
-    $("kpi-stock").textContent = list.length ? fmt.format(Number(list[list.length-1].stock)||0) : "—";
-    $("data-table").innerHTML = list.length ? list.map(r => `<tr><td>${monthLabel(r.period)}</td><td>${fmt.format(r.admissions)}</td><td>${fmt.format(r.dismissals)}</td><td>${fmt.format(r.balance)}</td><td>${fmt.format(r.stock)}</td></tr>`).join("") : '<tr><td colspan="5" class="empty-cell">Nenhum registro para os filtros selecionados.</td></tr>';
-    if(chart) chart.data.datasets[0].data = list.map(r=>Number(r[metric])||0), chart.data.labels = list.map(r=>monthLabel(r.period)), chart.update();
+    $("kpi-admissions").textContent = display(sum(list,"admissions"));
+    $("kpi-dismissals").textContent = display(sum(list,"dismissals"));
+    $("kpi-balance").textContent = display(sum(list,"balance"));
+    $("kpi-stock").textContent = list.length ? display(list[list.length-1].stock) : "—";
+    $("data-table").innerHTML = list.length ? list.map(r => `<tr><td>${monthLabel(r.period)}</td><td>${display(r.admissions)}</td><td>${display(r.dismissals)}</td><td>${display(r.balance)}</td><td>${display(r.stock)}</td></tr>`).join("") : '<tr><td colspan="5" class="empty-cell">Nenhum registro para os filtros selecionados.</td></tr>';
+    if(chart) {
+      chart.data.datasets[0].data = list.map(r=>validNumber(r[metric]) ? Number(r[metric]) : null);
+      chart.data.labels = list.map(r=>monthLabel(r.period));
+      chart.update();
+    }
   };
   const download = () => {
     const head = ["period","admissions","dismissals","balance","stock"];
@@ -34,7 +43,7 @@
     a.href=url;a.download="novo-caged-contagem.csv";a.click();URL.revokeObjectURL(url);
   };
   fetch(dataUrl).then(r=>{if(!r.ok) throw new Error("base indisponível");return r.json();}).then(payload=>{
-    rows = Array.isArray(payload.data) ? payload.data.filter(r=>r.period && ["admissions","dismissals","balance","stock"].every(k=>Number.isFinite(Number(r[k])))).sort((a,b)=>a.period.localeCompare(b.period)) : [];
+    rows = Array.isArray(payload.data) ? payload.data.filter(r=>/^\\d{4}-\\d{2}$/.test(r.period) && ["admissions","dismissals","balance"].every(k=>validNumber(r[k])) && (r.stock === null || r.stock === undefined || validNumber(r.stock))).sort((a,b)=>a.period.localeCompare(b.period)) : [];
     if(!rows.length) throw new Error("base sem observações validadas");
     const periods = [...new Set(rows.map(r=>r.period))];
     $("period-start").innerHTML = periods.map(p=>`<option value="${p}">${monthLabel(p)}</option>`).join("");
