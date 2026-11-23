@@ -21,8 +21,10 @@ Foi incluído `scripts/process_novo_caged.py`. Ele agrega um TXT mensal após a 
 python scripts/process_novo_caged.py "CAGEDMOV2026XXXX.txt" \
   --period 2026-XX \
   --municipality-column "NOME_EXATO_DA_COLUNA_MUNICIPIO" \
-  --movement-column "NOME_EXATO_DA_COLUNA_MOVIMENTACAO" \
-  --municipality-code "CODIGO_EXATO_DE_CONTAGEM"
+  --movement-column "NOME_EXATO_DA_COLUNA_TIPO_MOVIMENTACAO" \
+  --municipality-code "CODIGO_EXATO_DE_CONTAGEM" \
+  --admission-value "VALOR_EXATO_ADMISSAO" \
+  --dismissal-value "VALOR_EXATO_DESLIGAMENTO"
 ```
 
 O script:
