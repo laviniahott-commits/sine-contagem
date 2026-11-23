@@ -4,6 +4,7 @@ on:
   push:
     paths:
       - "data/emprego-formal.json"
+      - "scripts/process_novo_caged.py"
       - ".github/workflows/validate-employment-data.yml"
   pull_request:
     paths:
@@ -16,6 +17,8 @@ jobs:
     steps:
       - name: Baixar repositório
         uses: actions/checkout@v4
+      - name: Verificar sintaxe do processador
+        run: python -m py_compile scripts/process_novo_caged.py
       - name: Validar estrutura e consistência
         run: |
           python - <<'PY'
