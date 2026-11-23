@@ -1,0 +1,48 @@
+name: Validar dados do emprego formal
+
+on:
+  push:
+    paths:
+      - "data/emprego-formal.json"
+      - ".github/workflows/validate-employment-data.yml"
+  pull_request:
+    paths:
+      - "data/emprego-formal.json"
+      - ".github/workflows/validate-employment-data.yml"
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Baixar repositório
+        uses: actions/checkout@v4
+      - name: Validar estrutura e consistência
+        run: |
+          python - <<'PY'
+          import json
+          import re
+          from pathlib import Path
+
+          path = Path("data/emprego-formal.json")
+          payload = json.loads(path.read_text(encoding="utf-8"))
+
+          required = {"source", "municipality", "ibge_code", "unit", "reference", "data"}
+          missing = required - payload.keys()
+          assert not missing, f"Campos ausentes: {sorted(missing)}"
+          assert payload["municipality"] == "Contagem"
+          assert payload["ibge_code"] == "3118601"
+          assert isinstance(payload["data"], list)
+
+          periods = []
+          for index, row in enumerate(payload["data"]):
+              assert re.fullmatch(r"\\d{4}-(0[1-9]|1[0-2])", row["period"]), f"Período inválido na linha {index + 1}"
+              periods.append(row["period"])
+              for key in ("admissions", "dismissals", "balance"):
+                  assert isinstance(row.get(key), int), f"{key} deve ser inteiro na linha {index + 1}"
+              assert row["balance"] == row["admissions"] - row["dismissals"], f"Saldo inconsistente em {row['period']}"
+              stock = row.get("stock")
+              assert stock is None or isinstance(stock, int), f"Estoque inválido em {row['period']}"
+
+          assert periods == sorted(set(periods)), "Períodos devem estar ordenados e não podem se repetir"
+          print(f"JSON válido: {len(periods)} competência(s) verificadas.")
+          PY
