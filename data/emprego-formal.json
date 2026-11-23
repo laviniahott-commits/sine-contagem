@@ -48,6 +48,22 @@
   ],
   "annual_summary": [
     {
+      "year": 2021,
+      "admissions": 108641,
+      "dismissals": 96987,
+      "balance": 11654,
+      "stock": 193008,
+      "relative_variation": 6.43
+    },
+    {
+      "year": 2022,
+      "admissions": 119771,
+      "dismissals": 112759,
+      "balance": 7012,
+      "stock": 200020,
+      "relative_variation": 3.63
+    },
+    {
       "year": 2023,
       "admissions": 121528,
       "dismissals": 113978,
