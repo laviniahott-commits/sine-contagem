@@ -25,7 +25,7 @@ def main():
     parser.add_argument("--encoding", default="utf-8-sig")
     args = parser.parse_args()
 
-    if not re.fullmatch(r"\\d{4}-(0[1-9]|1[0-2])", args.period):
+    if not re.fullmatch(r"\d{4}-(0[1-9]|1[0-2])", args.period):
         parser.error("--period must use YYYY-MM")
     if args.admission_value == args.dismissal_value:
         parser.error("Admission and dismissal values must be different")
@@ -58,28 +58,33 @@ def main():
         raise SystemExit("Nenhuma movimentação encontrada para o código municipal informado.")
 
     output = Path(args.output)
-    payload = {
-        "source": "Ministério do Trabalho e Emprego — Novo Caged",
-        "source_url": "https://www.gov.br/trabalho-e-emprego/pt-br/acesso-a-informacao/acoes-e-programas/programas-projetos-acoes-obras-e-atividades/estatisticas-trabalho/microdados-rais-e-caged",
-        "municipality": "Contagem",
-        "ibge_code": "3118601",
-        "source_municipality_code": args.municipality_code,
-        "unit": "movimentações/vínculos",
-        "reference": args.period,
-        "data": [{
-            "period": args.period,
-            "admissions": admissions,
-            "dismissals": dismissals,
-            "balance": admissions - dismissals,
-            "stock": None
-        }]
-    }
+    if output.exists():
+        payload = json.loads(output.read_text(encoding="utf-8"))
+        if payload.get("municipality") != "Contagem" or payload.get("ibge_code") != "3118601":
+            raise SystemExit("O arquivo de saída não corresponde a Contagem/3118601.")
+        previous = [r for r in payload.get("data", []) if r.get("period") != args.period]
+    else:
+        payload = {
+            "source": "Ministério do Trabalho e Emprego — Novo Caged",
+            "source_url": "https://www.gov.br/trabalho-e-emprego/pt-br/acesso-a-informacao/acoes-e-programas/programas-projetos-acoes-obras-e-atividades/estatisticas-trabalho/microdados-rais-e-caged",
+            "municipality": "Contagem",
+            "ibge_code": "3118601",
+            "unit": "movimentações/vínculos",
+            "data": []
+        }
+        previous = []
+
+    payload["source_municipality_code"] = args.municipality_code
+    payload["reference"] = args.period
+    payload["data"] = sorted(previous + [{
+        "period": args.period,
+        "admissions": admissions,
+        "dismissals": dismissals,
+        "balance": admissions - dismissals,
+        "stock": None
+    }], key=lambda item: item["period"])
 
     output.parent.mkdir(parents=True, exist_ok=True)
-    if output.exists():
-        existing = json.loads(output.read_text(encoding="utf-8"))
-        previous = [r for r in existing.get("data", []) if r.get("period") != args.period]
-        payload["data"] = sorted(previous + payload["data"], key=lambda item: item["period"])
     output.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(f"{args.period}: {admissions} admissões, {dismissals} desligamentos, saldo {admissions-dismissals}.")
     print(f"Arquivo atualizado: {output}")
