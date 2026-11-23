@@ -45,5 +45,31 @@
       "dismissals": 1985,
       "balance": -11
     }
+  ],
+  "annual_summary": [
+    {
+      "year": 2023,
+      "admissions": 121528,
+      "dismissals": 113978,
+      "balance": 7550,
+      "stock": 207570,
+      "relative_variation": 3.77
+    },
+    {
+      "year": 2024,
+      "admissions": 141291,
+      "dismissals": 134790,
+      "balance": 6501,
+      "stock": 214071,
+      "relative_variation": 3.13
+    },
+    {
+      "year": 2025,
+      "admissions": 140398,
+      "dismissals": 137447,
+      "balance": 2951,
+      "stock": 217022,
+      "relative_variation": 1.38
+    }
   ]
 }
