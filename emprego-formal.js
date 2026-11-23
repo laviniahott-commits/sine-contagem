@@ -5,7 +5,7 @@
   const controls = ["period-start","period-end","indicator-select","reset-filters","download-csv"];
   let rows = [];
   let chart = null;
-  const labels = {balance:"Saldo de empregos",admissions:"Admissões",dismissals:"Desligamentos",stock:"Estoque"};
+  const labels = {balance:"Saldo de empregos",admissions:"Admissões",dismissals:"Desligamentos",stock:"Estoque",relative_variation:"Variação relativa"};
   const validNumber = value => value !== null && value !== undefined && value !== "" && Number.isFinite(Number(value));
   const display = value => validNumber(value) ? fmt.format(Number(value)) : "—";
   const monthLabel = value => {
@@ -29,7 +29,9 @@
     $("kpi-balance").textContent = display(sum(list,"balance"));
     const latestStock = [...list].reverse().find(r => validNumber(r.stock));
     $("kpi-stock").textContent = latestStock ? display(latestStock.stock) : "—";
-    $("data-table").innerHTML = list.length ? list.map(r => `<tr><td>${monthLabel(r.period)}</td><td>${display(r.admissions)}</td><td>${display(r.dismissals)}</td><td>${display(r.balance)}</td><td>${display(r.stock)}</td></tr>`).join("") : '<tr><td colspan="5" class="empty-cell">Nenhum registro para os filtros selecionados.</td></tr>';
+    const latestRelative = [...list].reverse().find(r => validNumber(r.relative_variation));
+    $("kpi-relative").textContent = latestRelative ? Number(latestRelative.relative_variation).toLocaleString("pt-BR",{minimumFractionDigits:2,maximumFractionDigits:2}) + "%" : "—";
+    $("data-table").innerHTML = list.length ? list.map(r => `<tr><td>${monthLabel(r.period)}</td><td>${display(r.admissions)}</td><td>${display(r.dismissals)}</td><td>${display(r.balance)}</td><td>${display(r.stock)}</td><td>${validNumber(r.relative_variation) ? Number(r.relative_variation).toLocaleString("pt-BR",{minimumFractionDigits:2,maximumFractionDigits:2}) + "%" : "—"}</td></tr>`).join("") : '<tr><td colspan="6" class="empty-cell">Nenhum registro para os filtros selecionados.</td></tr>';
     if(chart) {
       chart.data.datasets[0].label = labels[metric];
       chart.data.datasets[0].data = list.map(r=>validNumber(r[metric]) ? Number(r[metric]) : null);
@@ -38,14 +40,14 @@
     }
   };
   const download = () => {
-    const head = ["period","admissions","dismissals","balance","stock"];
+    const head = ["period","admissions","dismissals","balance","stock","relative_variation"];
     const csv = [head.join(";"),...filtered().map(r=>head.map(k=>r[k]??"").join(";"))].join("\n");
     const blob = new Blob(["\uFEFF"+csv],{type:"text/csv;charset=utf-8"});
     const url = URL.createObjectURL(blob), a=document.createElement("a");
     a.href=url;a.download="novo-caged-contagem.csv";a.click();URL.revokeObjectURL(url);
   };
   fetch(dataUrl).then(r=>{if(!r.ok) throw new Error("base indisponível");return r.json();}).then(payload=>{
-    rows = Array.isArray(payload.data) ? payload.data.filter(r=>/^\d{4}-\d{2}$/.test(r.period) && ["admissions","dismissals","balance"].every(k=>validNumber(r[k])) && (r.stock === null || r.stock === undefined || validNumber(r.stock))).sort((a,b)=>a.period.localeCompare(b.period)) : [];
+    rows = Array.isArray(payload.data) ? payload.data.filter(r=>/^\d{4}-\d{2}$/.test(r.period) && ["admissions","dismissals","balance"].every(k=>validNumber(r[k])) && (r.stock === null || r.stock === undefined || validNumber(r.stock)) && (r.relative_variation === null || r.relative_variation === undefined || validNumber(r.relative_variation))).sort((a,b)=>a.period.localeCompare(b.period)) : [];
     if(!rows.length) throw new Error("base sem observações validadas");
     const periods = [...new Set(rows.map(r=>r.period))];
     $("period-start").innerHTML = periods.map(p=>`<option value="${p}">${monthLabel(p)}</option>`).join("");
