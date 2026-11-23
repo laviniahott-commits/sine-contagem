@@ -55,6 +55,9 @@
     if(window.Chart){
       $("chart-empty").hidden=true;
       chart = new Chart($("employment-chart"),{type:"line",data:{labels:rows.map(r=>monthLabel(r.period)),datasets:[{label:"Saldo de empregos",data:rows.map(r=>r.balance),borderColor:"#176b9b",backgroundColor:"rgba(23,107,155,.12)",fill:true,tension:.28,pointRadius:2,borderWidth:2}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{grid:{color:"#edf1f3"},ticks:{callback:v=>fmt.format(v)}},x:{grid:{display:false}}}}});
+    } else {
+      $("chart-empty").hidden=false;
+      $("chart-empty").innerHTML = "<strong>O gráfico não pôde ser carregado.</strong><span>Os indicadores e a tabela continuam disponíveis; tente recarregar a página para carregar a biblioteca do gráfico.</span>";
     }
     ["period-start","period-end","indicator-select"].forEach(id=>$(id).addEventListener("change",show));
     $("reset-filters").addEventListener("click",()=>{$("period-start").value=periods[0];$("period-end").value=periods[periods.length-1];$("indicator-select").value="balance";show();});
