@@ -57,7 +57,7 @@ O JSON também registra a fonte, URL, código territorial usado no arquivo e ref
 7. Registrar URL da fonte, data de extração e referência temporal.
 
 ## Situação atual
-A interface, filtros, tabela, gráfico e exportação CSV estão implementados. O processamento assistido foi incluído, mas a série municipal ainda não foi carregada: o JSON permanece vazio intencionalmente para impedir a publicação de números não verificados.
+A interface, filtros, tabela, gráficos e exportação CSV estão implementados. O JSON atualmente contém valores mensais (setembro/2026), setoriais e anuais (2021–2025) inseridos para desenvolvimento. Esses valores ainda não foram conferidos, linha a linha, com a extração oficial e as notas metodológicas do Novo Caged. Portanto, devem ser tratados como provisórios e não como série oficialmente validada. Antes da divulgação institucional, confirmar os totais, o recorte municipal, a classificação setorial, o estoque e a variação relativa diretamente nas fontes do MTE. O processamento assistido permanece disponível para consolidar microdados após a conferência do leiaute.
 
 ## Frequência
 O MTE divulga o CAGED mensalmente. A atualização deve ocorrer após a publicação oficial e a validação do arquivo. O calendário de divulgação de 2026 está em: https://www.gov.br/trabalho-e-emprego/pt-br/assuntos/estatisticas-trabalho/o-pdet/calendario-de-divulgacao-do-novo-caged
