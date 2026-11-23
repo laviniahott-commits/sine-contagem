@@ -13,5 +13,37 @@
       "stock": 226338,
       "relative_variation": 1.3
     }
+  ],
+  "sectors": [
+    {
+      "sector": "Serviços",
+      "admissions": 7608,
+      "dismissals": 5077,
+      "balance": 2531
+    },
+    {
+      "sector": "Comércio",
+      "admissions": 4412,
+      "dismissals": 4155,
+      "balance": 257
+    },
+    {
+      "sector": "Construção",
+      "admissions": 781,
+      "dismissals": 646,
+      "balance": 135
+    },
+    {
+      "sector": "Agropecuária",
+      "admissions": 3,
+      "dismissals": 9,
+      "balance": -6
+    },
+    {
+      "sector": "Indústria",
+      "admissions": 1974,
+      "dismissals": 1985,
+      "balance": -11
+    }
   ]
 }
