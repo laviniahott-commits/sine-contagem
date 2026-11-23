@@ -4,6 +4,18 @@
   "ibge_code": "3118601",
   "unit": "vínculos",
   "reference": "Setembro de 2026",
+  "validation": {
+    "status": "partial",
+    "validated_fields": ["admissions", "dismissals", "balance"],
+    "pending_fields": ["stock", "relative_variation", "annual_summary", "sectors"],
+    "note": "Os totais municipais de admissões, desligamentos e saldo de setembro de 2026 foram corroborados em publicação oficial da Prefeitura de Contagem, que atribui os dados ao Caged/MTE. Estoque, variação relativa, série anual e recorte setorial permanecem pendentes de conferência na base primária."
+  },
+  "municipal_source": {
+    "publisher": "Prefeitura Municipal de Contagem",
+    "title": "Economia em alta: Contagem é campeã na geração de novos empregos em MG",
+    "published_at": "2026-11-11",
+    "url": "https://portal.contagem.mg.gov.br/portal/noticias/0/3/85021/economia-em-alta-contagem-e-campea-na-geracao-de-novos-empregos-em-mg/"
+  },
   "data": [
     {
       "period": "2026-09",
