@@ -113,7 +113,16 @@
     $("download-csv").addEventListener("click",download);
     show();
   }).catch(()=>{
-    $("data-status").textContent = "Integração de dados em preparação";
+    $("data-status").textContent = "Não foi possível carregar a base de dados.";
     $("chart-empty").hidden=false;
+    $("chart-empty").innerHTML = "<strong>Não foi possível carregar os dados deste painel.</strong><span>Confira sua conexão e atualize a página. Se o problema continuar, a base de dados pode estar temporariamente indisponível.</span>";
+    $("data-table").innerHTML = '<tr><td colspan="6" class="empty-cell">Dados indisponíveis no momento.</td></tr>';
+    $("annual-table").innerHTML = '<tr><td colspan="6" class="empty-cell">Dados anuais indisponíveis no momento.</td></tr>';
+    $("sector-table").innerHTML = '<tr><td colspan="4" class="empty-cell">Dados setoriais indisponíveis no momento.</td></tr>';
+    $("annual-balance-empty").hidden=false;
+    $("annual-movement-empty").hidden=false;
+    $("annual-balance-empty").textContent = "Gráfico anual indisponível porque a base de dados não foi carregada.";
+    $("annual-movement-empty").textContent = "Gráfico anual indisponível porque a base de dados não foi carregada.";
+    $("latest-month-summary").textContent = "O resultado mensal mais recente não pôde ser carregado.";
   });
 })();
