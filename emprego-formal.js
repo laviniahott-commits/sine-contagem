@@ -52,8 +52,8 @@
     $("period-start").value=periods[0];$("period-end").value=periods[periods.length-1];
     controls.forEach(id=>$(id).disabled=false);
     $("data-status").textContent = "Base carregada · " + (payload.reference || "período informado na fonte");
-    $("chart-empty").hidden=true;
     if(window.Chart){
+      $("chart-empty").hidden=true;
       chart = new Chart($("employment-chart"),{type:"line",data:{labels:rows.map(r=>monthLabel(r.period)),datasets:[{label:"Saldo de empregos",data:rows.map(r=>r.balance),borderColor:"#176b9b",backgroundColor:"rgba(23,107,155,.12)",fill:true,tension:.28,pointRadius:2,borderWidth:2}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{grid:{color:"#edf1f3"},ticks:{callback:v=>fmt.format(v)}},x:{grid:{display:false}}}}});
     }
     ["period-start","period-end","indicator-select"].forEach(id=>$(id).addEventListener("change",show));
