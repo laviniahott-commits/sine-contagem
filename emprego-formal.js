@@ -1,6 +1,7 @@
 (() => {
   const dataUrl = "data/emprego-formal.json";
   const fmt = new Intl.NumberFormat("pt-BR");
+  const fmtPercent = new Intl.NumberFormat("pt-BR",{minimumFractionDigits:2,maximumFractionDigits:2});
   const $ = id => document.getElementById(id);
   const controls = ["period-start","period-end","indicator-select","reset-filters","download-csv"];
   let rows = [];
@@ -39,7 +40,7 @@
       chart.data.datasets[0].label = labels[metric];
       chart.data.datasets[0].data = list.map(r=>validNumber(r[metric]) ? Number(r[metric]) : null);
       chart.data.labels = list.map(r=>monthLabel(r.period));
-      chart.options.scales.y.ticks.callback = value => fmt.format(value) + (metric === "relative_variation" ? "%" : "");
+      chart.options.scales.y.ticks.callback = value => metric === "relative_variation" ? fmtPercent.format(value) + "%" : fmt.format(value);
       chart.update();
     }
   };
@@ -100,7 +101,7 @@
 
     if(window.Chart){
       $("chart-empty").hidden=true;
-      chart = new Chart($("employment-chart"),{type:"line",data:{labels:rows.map(r=>monthLabel(r.period)),datasets:[{label:"Saldo de empregos",data:rows.map(r=>r.balance),borderColor:"#176b9b",backgroundColor:"rgba(23,107,155,.12)",fill:true,tension:.28,pointRadius:2,borderWidth:2}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>ctx.dataset.label+": "+fmt.format(ctx.parsed.y)+(ctx.dataset.label.includes("(%)")?"%":" vínculos")}}},scales:{y:{grid:{color:"#edf1f3"},ticks:{callback:v=>fmt.format(v)}},x:{grid:{display:false}}}}});
+      chart = new Chart($("employment-chart"),{type:"line",data:{labels:rows.map(r=>monthLabel(r.period)),datasets:[{label:"Saldo de empregos",data:rows.map(r=>r.balance),borderColor:"#176b9b",backgroundColor:"rgba(23,107,155,.12)",fill:true,tension:.28,pointRadius:2,borderWidth:2}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>ctx.dataset.label+": "+(ctx.dataset.label.includes("(%)")?fmtPercent.format(ctx.parsed.y)+"%":fmt.format(ctx.parsed.y)+" vínculos")}}},scales:{y:{grid:{color:"#edf1f3"},ticks:{callback:v=>fmt.format(v)}},x:{grid:{display:false}}}}});
     } else {
       $("chart-empty").hidden=false;
       $("chart-empty").innerHTML = "<strong>O gráfico não pôde ser carregado.</strong><span>Os indicadores e a tabela continuam disponíveis; tente recarregar a página para carregar a biblioteca do gráfico.</span>";
