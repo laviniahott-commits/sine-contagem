@@ -28,12 +28,12 @@ python scripts/process_novo_caged.py "CAGEDMOV2026XXXX.txt" \
 O script:
 - exige o mês de referência e os nomes exatos das colunas;
 - filtra somente o código municipal informado;
-- conta movimentos +1 como admissões e -1 como desligamentos;
+- conta as linhas classificadas como admissão e desligamento usando os valores exatos informados por quem conferiu o leiaute;
 - calcula o saldo como admissões menos desligamentos;
 - mantém o estoque como `null`, pois estoque não pode ser inferido pela soma de movimentações;
 - acrescenta/atualiza o mês no JSON, sem substituir os demais meses.
 
-**Atenção:** antes de executar, conferir o leiaute e a codificação do TXT daquele período. Se o arquivo representar movimentos por códigos diferentes de +1/-1, não executar sem adaptar e validar o mapeamento conforme a documentação oficial. O script não inclui ajustes fora do prazo ou exclusões automaticamente; isso precisa ser definido conforme o indicador e as notas metodológicas da competência.
+**Atenção:** antes de executar, conferir o leiaute e a codificação do TXT daquele período. Os códigos ou descrições que representam admissão e desligamento variam conforme o leiaute; por isso, o script exige que os valores exatos sejam informados após a conferência da documentação oficial. Categorias não mapeadas interrompem o processamento em vez de serem descartadas. O script não inclui ajustes fora do prazo ou exclusões automaticamente; isso precisa ser definido conforme o indicador e as notas metodológicas da competência.
 
 ## Estrutura de dados
 Cada observação mensal em `data/emprego-formal.json` deve conter:
