@@ -28,7 +28,24 @@
       <div class="panel-tags"><span>CONTAGEM · MG</span><span>FONTE PRINCIPAL: NOVO CAGED</span><span>UNIDADE: VÍNCULOS</span></div>
     </div></section>
     <section class="section-wrap panel-content">
-      <div class="panel-alert"><strong>Consulta oficial disponível</strong><p>Os dados do Novo Caged são publicados pelo Ministério do Trabalho e Emprego. Esta página direciona às consultas oficiais enquanto a integração automatizada da base municipal é preparada. Nenhum valor estimado ou fictício é apresentado.</p></div>
+      <section class="dashboard-shell" aria-labelledby="dashboard-title">
+        <div class="dashboard-top"><div><div class="section-kicker">PAINEL INTERATIVO</div><h2 id="dashboard-title">Movimentação do emprego</h2><p>Contagem · Minas Gerais · Novo Caged</p></div><span class="data-status" id="data-status">Base municipal em preparação</span></div>
+        <div class="dashboard-filters">
+          <label>Período inicial<select id="period-start" disabled><option>—</option></select></label>
+          <label>Período final<select id="period-end" disabled><option>—</option></select></label>
+          <label>Indicador<select id="indicator-select" disabled><option value="balance">Saldo de empregos</option><option value="admissions">Admissões</option><option value="dismissals">Desligamentos</option><option value="stock">Estoque</option></select></label>
+          <button id="reset-filters" class="filter-reset" type="button" disabled>Limpar filtros</button>
+        </div>
+        <div class="kpi-grid">
+          <article class="kpi-card"><span>ADMISSÕES</span><strong id="kpi-admissions">—</strong><small>Vínculos no período selecionado</small></article>
+          <article class="kpi-card"><span>DESLIGAMENTOS</span><strong id="kpi-dismissals">—</strong><small>Vínculos no período selecionado</small></article>
+          <article class="kpi-card"><span>SALDO</span><strong id="kpi-balance">—</strong><small>Admissões menos desligamentos</small></article>
+          <article class="kpi-card"><span>ESTOQUE</span><strong id="kpi-stock">—</strong><small>Vínculos ativos, conforme a fonte</small></article>
+        </div>
+        <div class="chart-card"><div class="chart-heading"><div><h3 id="chart-title">Evolução do saldo de empregos</h3><p>Valores mensais · unidade: vínculos</p></div><span class="chart-legend"><i></i> Contagem</span></div><div class="chart-area" id="chart-area"><canvas id="employment-chart" aria-label="Gráfico da movimentação do emprego formal" role="img"></canvas><div class="chart-empty" id="chart-empty"><strong>Os dados municipais ainda não foram carregados.</strong><span>Assim que a série oficial for integrada, o gráfico será exibido aqui. Não utilizamos números ilustrativos.</span></div></div></div>
+        <div class="table-card"><div class="table-heading"><div><h3>Série histórica</h3><p>Detalhamento mensal do indicador selecionado</p></div><button id="download-csv" class="download-button" type="button" disabled>↓ Exportar CSV</button></div><div class="table-scroll"><table><thead><tr><th>Período</th><th>Admissões</th><th>Desligamentos</th><th>Saldo</th><th>Estoque</th></tr></thead><tbody id="data-table"><tr><td colspan="5" class="empty-cell">Aguardando integração da base oficial.</td></tr></tbody></table></div></div>
+        <p class="dashboard-footnote">Fonte prevista: Ministério do Trabalho e Emprego (MTE), Novo Caged. A série será publicada somente após validação do código IBGE de Contagem (3118601), período, variáveis e unidade de medida.</p>
+      </section>
       <div class="section-heading panel-heading"><div><div class="section-kicker">CONSULTAS E BASES</div><h2>Consulte os dados oficiais</h2></div><p>Use as ferramentas do Ministério para selecionar Minas Gerais e o município de Contagem, observando o período de referência e o tipo de dado.</p></div>
       <div class="official-grid">
         <article class="official-card"><span class="official-label">MINISTÉRIO DO TRABALHO E EMPREGO</span><h3>Painel do Novo Caged</h3><p>Consulta de admissões, desligamentos, saldo e estoque, com filtros por município e atividade econômica.</p><a href="https://www.gov.br/trabalho-e-emprego/pt-br/assuntos/estatisticas-trabalho/novo-caged" target="_blank" rel="noopener">Acessar o Novo Caged ↗</a></article>
@@ -43,5 +60,5 @@
     </section>
   </main>
   <footer class="site-footer"><div class="footer-main section-wrap"><div><div class="footer-brand">SINE <span>CONTAGEM</span></div><p>Observatório do Trabalho</p></div><div><strong>Secretaria Municipal de Trabalho e Geração de Renda</strong><p>Prefeitura de Contagem · Minas Gerais</p></div></div><div class="footer-bottom"><span>Informação pública para fortalecer políticas de trabalho e renda.</span><span>© <span id="year"></span> · SINE Contagem</span></div></footer>
-  <button class="back-top" aria-label="Voltar ao topo" title="Voltar ao topo">↑</button><script src="script.js"></script>
+  <button class="back-top" aria-label="Voltar ao topo" title="Voltar ao topo">↑</button><script src="script.js"></script><script src="https://cdn.jsdelivr.net/npm/chart.js"></script><script src="emprego-formal.js"></script>
 </body></html>
