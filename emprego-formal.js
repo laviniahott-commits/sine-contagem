@@ -15,7 +15,8 @@
     return Number.isNaN(d.getTime()) ? value : new Intl.DateTimeFormat("pt-BR",{month:"short",year:"numeric"}).format(d);
   };
   const filtered = () => {
-    const start = $("period-start").value, end = $("period-end").value;
+    let start = $("period-start").value, end = $("period-end").value;
+    if (start && end && start > end) [start, end] = [end, start];
     return rows.filter(r => (!start || r.period >= start) && (!end || r.period <= end));
   };
   const sum = (list,key) => {
@@ -43,10 +44,15 @@
   };
   const download = () => {
     const head = ["period","admissions","dismissals","balance","stock","relative_variation"];
-    const csv = [head.join(";"),...filtered().map(r=>head.map(k=>r[k]??"").join(";"))].join("\n");
+    const escapeCsv = value => {
+      const text = value === null || value === undefined ? "" : String(value);
+      return /[;"\n\r]/.test(text) ? '"' + text.replace(/"/g,'""') + '"' : text;
+    };
+    const csv = [head.join(";"),...filtered().map(r=>head.map(k=>escapeCsv(r[k])).join(";"))].join("\r\n");
     const blob = new Blob(["\uFEFF"+csv],{type:"text/csv;charset=utf-8"});
     const url = URL.createObjectURL(blob), a=document.createElement("a");
-    a.href=url;a.download="novo-caged-contagem.csv";a.click();URL.revokeObjectURL(url);
+    a.href=url;a.download="novo-caged-contagem.csv";a.click();
+    setTimeout(()=>URL.revokeObjectURL(url),1000);
   };
   fetch(dataUrl).then(r=>{if(!r.ok) throw new Error("base indisponível");return r.json();}).then(payload=>{
     rows = Array.isArray(payload.data) ? payload.data.filter(r=>/^\d{4}-\d{2}$/.test(r.period) && ["admissions","dismissals","balance"].every(k=>validNumber(r[k])) && (r.stock === null || r.stock === undefined || validNumber(r.stock)) && (r.relative_variation === null || r.relative_variation === undefined || validNumber(r.relative_variation))).sort((a,b)=>a.period.localeCompare(b.period)) : [];
@@ -78,7 +84,12 @@
 
     const sectors = Array.isArray(payload.sectors) ? payload.sectors : [];
     const sectorTotals = sectors.reduce((acc,s)=>({admissions:acc.admissions+Number(s.admissions||0),dismissals:acc.dismissals+Number(s.dismissals||0),balance:acc.balance+Number(s.balance||0)}),{admissions:0,dismissals:0,balance:0});
-    const sectorValid = sectors.length>0 && sectors.every(s=>s.sector && ["admissions","dismissals","balance"].every(k=>validNumber(s[k]) && Number(s[k])===Math.trunc(Number(s[k])))) && sectorTotals.admissions===14778 && sectorTotals.dismissals===11872 && sectorTotals.balance===2906;
+    const sectorReference = rows[rows.length-1];
+    const sectorValid = sectors.length>0 && !!sectorReference &&
+      sectors.every(s=>s.sector && ["admissions","dismissals","balance"].every(k=>validNumber(s[k]) && Number(s[k])===Math.trunc(Number(s[k])) && Number(s[k])>=-Number.MAX_SAFE_INTEGER)) &&
+      sectorTotals.admissions===Number(sectorReference.admissions) &&
+      sectorTotals.dismissals===Number(sectorReference.dismissals) &&
+      sectorTotals.balance===Number(sectorReference.balance);
     $("sector-table").innerHTML = sectorValid ? sectors.map(s=>"<tr><td>"+s.sector+"</td><td>"+display(s.admissions)+"</td><td>"+display(s.dismissals)+"</td><td class='"+(Number(s.balance)<0?"negative-balance":"positive-balance")+"'>"+(Number(s.balance)>0?"+":"")+display(s.balance)+"</td></tr>").join("") : '<tr><td colspan="4" class="empty-cell">Dados setoriais indisponíveis ou divergentes dos totais municipais.</td></tr>';
 
     if(window.Chart){
