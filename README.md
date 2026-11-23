@@ -1,36 +1,43 @@
 # SINE Contagem | Observatório do Trabalho
 
-Painéis temáticos e indicadores públicos sobre o mercado de trabalho de Contagem (MG).
+Portal de indicadores públicos sobre emprego, renda e condições de trabalho em Contagem (MG), com identidade visual institucional e prioridade para fontes oficiais.
 
-## Acesso ao site
+## Acesso
 
-- Site: https://laviniahott-commits.github.io/sine-contagem/
-- Painel de Emprego formal: https://laviniahott-commits.github.io/sine-contagem/emprego-formal.html
+- **Portal:** https://laviniahott-commits.github.io/sine-contagem/
+- **Painel de emprego formal:** https://laviniahott-commits.github.io/sine-contagem/emprego-formal.html
 
-## Critérios do projeto
+## Estrutura
 
-- Priorizar fontes oficiais e verificáveis.
-- Identificar fonte, período de referência e unidade de medida em cada indicador.
-- Não preencher lacunas com estimativas ou números ilustrativos.
-- Preservar valores ausentes como `null`, nunca convertê-los automaticamente em zero.
-- Manter separadas séries com metodologias diferentes.
+- `index.html`: página inicial e navegação temática.
+- `emprego-formal.html`: painel de emprego formal.
+- `emprego-formal.js`: filtros, indicadores, gráficos e exportação CSV.
+- `data/emprego-formal.json`: dados estruturados do painel.
+- `styles.css`: identidade visual e responsividade.
+- `scripts/process_novo_caged.py`: apoio à consolidação dos microdados.
+- `.github/workflows/validate-employment-data.yml`: validação automática da estrutura dos dados.
 
-## Painel 01 — Emprego formal
+## Critérios de publicação
 
-Fonte principal: Ministério do Trabalho e Emprego (MTE), Novo Caged.
+1. Informar fonte, período de referência, unidade e abrangência territorial.
+2. Não criar estimativas para preencher lacunas.
+3. Preservar dados ausentes como `null`, sem convertê-los em zero.
+4. Separar séries com metodologias diferentes.
+5. Distinguir dados conferidos de dados ainda pendentes de validação.
 
-A base municipal será consolidada em `data/emprego-formal.json`. O painel apresenta admissões, desligamentos, saldo, estoque quando houver dado oficial comparável, filtros de período, gráfico, tabela e exportação CSV.
+## Situação do painel de emprego formal
 
-### Processamento
+A interface contém filtros de período e indicador, cartões-resumo, gráficos, tabelas e exportação CSV. A base contém uma competência mensal (setembro de 2026) e um quadro anual de 2021 a 2025, além de recorte setorial.
 
-O script `scripts/process_novo_caged.py` foi preparado para agregar um arquivo TXT mensal depois que o leiaute oficial e os nomes exatos das colunas forem conferidos. Não execute com nomes de colunas presumidos: o código municipal e a variável de movimentação precisam corresponder ao arquivo e à documentação da competência.
+**Validação parcial:** os totais municipais de setembro de 2026 — 14.778 admissões, 11.872 desligamentos e saldo de 2.906 vínculos — foram corroborados por publicação da Prefeitura de Contagem que atribui os números ao Caged/MTE.
 
-Consulte `docs/ATUALIZACAO-EMPREGO-FORMAL.md` para o procedimento e as regras de validação.
+**Pendente de conferência na base primária:** estoque, variação relativa, quadro anual e distribuição setorial. Até essa conferência, esses campos não devem ser tratados como série oficialmente validada nem usados em divulgação institucional.
 
-### Validação automática
+Consulte:
+- [Procedimento de atualização](docs/ATUALIZACAO-EMPREGO-FORMAL.md)
+- [Status e pendências do projeto](docs/STATUS-PROJETO.md)
+- [Painel Novo Caged do MTE](https://www.gov.br/trabalho-e-emprego/pt-br/assuntos/estatisticas-trabalho/novo-caged)
 
-O GitHub Actions verifica a estrutura do JSON, o código territorial, os períodos, os tipos numéricos e a consistência do saldo sempre que a base é alterada.
+## Publicação
 
-## Situação da integração
-
-A interface do painel está implementada e o arquivo JSON já contém valores mensais, setoriais e anuais inseridos para desenvolvimento. Esses valores ainda precisam ser conferidos diretamente com os arquivos e relatórios oficiais do Novo Caged antes de serem tratados como série validada ou utilizados em divulgação institucional.
+O site é publicado pelo GitHub Pages a partir do branch `main`. Alterações em arquivos do site são publicadas após a conclusão do fluxo de implantação.
