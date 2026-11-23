@@ -35,7 +35,7 @@ jobs:
 
           periods = []
           for index, row in enumerate(payload["data"]):
-              assert re.fullmatch(r"\\d{4}-(0[1-9]|1[0-2])", row["period"]), f"Período inválido na linha {index + 1}"
+              assert re.fullmatch(r"\d{4}-(0[1-9]|1[0-2])", row["period"]), f"Período inválido na linha {index + 1}"
               periods.append(row["period"])
               for key in ("admissions", "dismissals", "balance"):
                   assert isinstance(row.get(key), int), f"{key} deve ser inteiro na linha {index + 1}"
