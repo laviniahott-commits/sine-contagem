@@ -3,6 +3,15 @@
   "municipality": "Contagem",
   "ibge_code": "3118601",
   "unit": "vínculos",
-  "reference": null,
-  "data": []
+  "reference": "Setembro de 2026",
+  "data": [
+    {
+      "period": "2026-09",
+      "admissions": 14778,
+      "dismissals": 11872,
+      "balance": 2906,
+      "stock": 226338,
+      "relative_variation": 1.3
+    }
+  ]
 }
