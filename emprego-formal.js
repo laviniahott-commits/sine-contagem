@@ -27,7 +27,8 @@
     $("kpi-admissions").textContent = display(sum(list,"admissions"));
     $("kpi-dismissals").textContent = display(sum(list,"dismissals"));
     $("kpi-balance").textContent = display(sum(list,"balance"));
-    $("kpi-stock").textContent = list.length ? display(list[list.length-1].stock) : "—";
+    const latestStock = [...list].reverse().find(r => validNumber(r.stock));
+    $("kpi-stock").textContent = latestStock ? display(latestStock.stock) : "—";
     $("data-table").innerHTML = list.length ? list.map(r => `<tr><td>${monthLabel(r.period)}</td><td>${display(r.admissions)}</td><td>${display(r.dismissals)}</td><td>${display(r.balance)}</td><td>${display(r.stock)}</td></tr>`).join("") : '<tr><td colspan="5" class="empty-cell">Nenhum registro para os filtros selecionados.</td></tr>';
     if(chart) {
       chart.data.datasets[0].label = labels[metric];
