@@ -56,7 +56,7 @@
     controls.forEach(id=>$(id).disabled=false);
     $("data-status").textContent = "Base carregada · " + (payload.reference || "período informado na fonte");
     const annual = Array.isArray(payload.annual_summary) ? payload.annual_summary : [];
-    const annualValid = annual.length===3 && annual.every(r=>Number.isInteger(r.year) && ["admissions","dismissals","balance","stock","relative_variation"].every(k=>validNumber(r[k])) && Number(r.admissions)-Number(r.dismissals)===Number(r.balance)) && annual.map(r=>r.year).join(",")==="2023,2024,2025";
+    const annualValid = annual.length===5 && annual.every((r,i)=>Number.isInteger(r.year) && r.year===2021+i && ["admissions","dismissals","balance","stock","relative_variation"].every(k=>validNumber(r[k])) && Number(r.admissions)-Number(r.dismissals)===Number(r.balance));
     $("annual-table").innerHTML = annualValid ? annual.map(r=>"<tr><td>"+r.year+"</td><td>"+display(r.admissions)+"</td><td>"+display(r.dismissals)+"</td><td class='"+(Number(r.balance)<0?"negative-balance":"positive-balance")+"'>"+(Number(r.balance)>0?"+":"")+display(r.balance)+"</td><td>"+display(r.stock)+"</td><td>"+Number(r.relative_variation).toLocaleString("pt-BR",{minimumFractionDigits:2,maximumFractionDigits:2})+"%</td></tr>").join("") : '<tr><td colspan="6" class="empty-cell">Série anual indisponível ou com inconsistências nos valores informados.</td></tr>';
 
     const sectors = Array.isArray(payload.sectors) ? payload.sectors : [];
