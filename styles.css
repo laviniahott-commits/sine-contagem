@@ -42,3 +42,22 @@
 .annual-september-note{margin:14px 0 0;padding:15px 18px;background:#fff7e7;border-left:3px solid var(--gold);font-size:11px;line-height:1.7;color:#536879}
 @media(max-width:900px){.annual-chart-grid{grid-template-columns:1fr}}
 @media(max-width:760px){.annual-chart-area{height:250px}}
+
+/* Rodapé institucional padronizado em todas as páginas */
+.site-footer{background:#0b2439!important;color:#dce8ef!important}
+.site-footer .footer-main.footer-expanded{display:grid!important;grid-template-columns:minmax(180px,1fr) minmax(360px,2fr) minmax(190px,1fr)!important;align-items:start!important;gap:42px!important;max-width:1200px;margin:0 auto;padding:52px 28px 44px!important}
+.site-footer .footer-identity{padding-right:22px}
+.site-footer .footer-secretariat{border-left:1px solid rgba(255,255,255,.16);border-right:1px solid rgba(255,255,255,.16);padding:0 30px}
+.site-footer .footer-secretariat>strong{display:block;color:#fff;font:700 13px Manrope;line-height:1.5}
+.site-footer .footer-team{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:15px 22px!important;margin-top:22px!important}
+.site-footer .footer-team div{display:grid;gap:4px}
+.site-footer .footer-team strong,.site-footer .footer-social>strong{font:700 11px "DM Sans",sans-serif;color:#fff}
+.site-footer .footer-team span,.site-footer .footer-social a,.site-footer .footer-social span{font:400 10px/1.6 "DM Sans",sans-serif;color:#a9bdca}
+.site-footer .footer-social{display:grid;gap:13px;align-content:start}
+.site-footer .footer-social a{text-decoration:none}
+.site-footer .footer-social a:hover{color:#f5c45e}
+.site-footer .footer-author{margin-top:24px!important;padding-top:15px;border-top:1px solid rgba(255,255,255,.14);font-size:10px!important}
+.site-footer .footer-bottom{max-width:none;border-top:1px solid rgba(255,255,255,.14);padding:18px max(28px,calc((100% - 1144px)/2))!important}
+@media(max-width:900px){.site-footer .footer-main.footer-expanded{grid-template-columns:1fr 2fr!important;gap:28px!important}.site-footer .footer-social{grid-column:1/-1;border-top:1px solid rgba(255,255,255,.14);padding-top:22px;grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:600px){.site-footer .footer-main.footer-expanded{grid-template-columns:1fr!important;gap:25px!important;padding:38px 22px!important}.site-footer .footer-secretariat{border:0;border-top:1px solid rgba(255,255,255,.16);border-bottom:1px solid rgba(255,255,255,.16);padding:22px 0}.site-footer .footer-team{grid-template-columns:1fr 1fr!important}.site-footer .footer-social{grid-column:auto;grid-template-columns:1fr}.site-footer .footer-bottom{display:grid;gap:8px;padding:16px 22px!important}}
+@media(max-width:380px){.site-footer .footer-team{grid-template-columns:1fr!important}}
