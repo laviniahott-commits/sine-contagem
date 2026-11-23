@@ -30,3 +30,15 @@
 .footer-author{margin-top:22px!important;font-size:10px!important}
 @media(max-width:760px){.footer-expanded{grid-template-columns:1fr;gap:28px}.footer-team{grid-template-columns:1fr 1fr}}
 @media(max-width:500px){.footer-team{grid-template-columns:1fr}}
+
+/* Gráficos de comparação anual */
+.annual-charts{margin-top:24px}
+.annual-chart-intro{margin:0 0 16px}
+.annual-chart-intro h3{font:750 25px Manrope;color:var(--navy);margin:9px 0 6px}
+.annual-chart-intro p{font-size:12px;line-height:1.7;color:var(--muted);max-width:720px;margin:0}
+.annual-chart-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.annual-chart-grid .chart-card{margin-top:0;min-width:0}
+.annual-chart-area{height:280px}
+.annual-september-note{margin:14px 0 0;padding:15px 18px;background:#fff7e7;border-left:3px solid var(--gold);font-size:11px;line-height:1.7;color:#536879}
+@media(max-width:900px){.annual-chart-grid{grid-template-columns:1fr}}
+@media(max-width:760px){.annual-chart-area{height:250px}}
