@@ -30,6 +30,7 @@
     $("kpi-stock").textContent = list.length ? display(list[list.length-1].stock) : "—";
     $("data-table").innerHTML = list.length ? list.map(r => `<tr><td>${monthLabel(r.period)}</td><td>${display(r.admissions)}</td><td>${display(r.dismissals)}</td><td>${display(r.balance)}</td><td>${display(r.stock)}</td></tr>`).join("") : '<tr><td colspan="5" class="empty-cell">Nenhum registro para os filtros selecionados.</td></tr>';
     if(chart) {
+      chart.data.datasets[0].label = labels[metric];
       chart.data.datasets[0].data = list.map(r=>validNumber(r[metric]) ? Number(r[metric]) : null);
       chart.data.labels = list.map(r=>monthLabel(r.period));
       chart.update();
@@ -43,7 +44,7 @@
     a.href=url;a.download="novo-caged-contagem.csv";a.click();URL.revokeObjectURL(url);
   };
   fetch(dataUrl).then(r=>{if(!r.ok) throw new Error("base indisponível");return r.json();}).then(payload=>{
-    rows = Array.isArray(payload.data) ? payload.data.filter(r=>/^\\d{4}-\\d{2}$/.test(r.period) && ["admissions","dismissals","balance"].every(k=>validNumber(r[k])) && (r.stock === null || r.stock === undefined || validNumber(r.stock))).sort((a,b)=>a.period.localeCompare(b.period)) : [];
+    rows = Array.isArray(payload.data) ? payload.data.filter(r=>/^\d{4}-\d{2}$/.test(r.period) && ["admissions","dismissals","balance"].every(k=>validNumber(r[k])) && (r.stock === null || r.stock === undefined || validNumber(r.stock))).sort((a,b)=>a.period.localeCompare(b.period)) : [];
     if(!rows.length) throw new Error("base sem observações validadas");
     const periods = [...new Set(rows.map(r=>r.period))];
     $("period-start").innerHTML = periods.map(p=>`<option value="${p}">${monthLabel(p)}</option>`).join("");
