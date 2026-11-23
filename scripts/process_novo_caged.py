@@ -80,7 +80,7 @@ def main():
         existing = json.loads(output.read_text(encoding="utf-8"))
         previous = [r for r in existing.get("data", []) if r.get("period") != args.period]
         payload["data"] = sorted(previous + payload["data"], key=lambda item: item["period"])
-    output.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\\n", encoding="utf-8")
+    output.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(f"{args.period}: {admissions} admissões, {dismissals} desligamentos, saldo {admissions-dismissals}.")
     print(f"Arquivo atualizado: {output}")
 
