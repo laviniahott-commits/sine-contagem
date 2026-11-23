@@ -5,6 +5,8 @@
   const controls = ["period-start","period-end","indicator-select","reset-filters","download-csv"];
   let rows = [];
   let chart = null;
+  let annualBalanceChart = null;
+  let annualMovementChart = null;
   const labels = {balance:"Saldo de empregos",admissions:"Admissões",dismissals:"Desligamentos",stock:"Estoque",relative_variation:"Variação relativa"};
   const validNumber = value => value !== null && value !== undefined && value !== "" && Number.isFinite(Number(value));
   const display = value => validNumber(value) ? fmt.format(Number(value)) : "—";
@@ -58,6 +60,21 @@
     const annual = Array.isArray(payload.annual_summary) ? payload.annual_summary : [];
     const annualValid = annual.length===5 && annual.every((r,i)=>Number.isInteger(r.year) && r.year===2021+i && ["admissions","dismissals","balance","stock","relative_variation"].every(k=>validNumber(r[k])) && Number(r.admissions)-Number(r.dismissals)===Number(r.balance));
     $("annual-table").innerHTML = annualValid ? annual.map(r=>"<tr><td>"+r.year+"</td><td>"+display(r.admissions)+"</td><td>"+display(r.dismissals)+"</td><td class='"+(Number(r.balance)<0?"negative-balance":"positive-balance")+"'>"+(Number(r.balance)>0?"+":"")+display(r.balance)+"</td><td>"+display(r.stock)+"</td><td>"+Number(r.relative_variation).toLocaleString("pt-BR",{minimumFractionDigits:2,maximumFractionDigits:2})+"%</td></tr>").join("") : '<tr><td colspan="6" class="empty-cell">Série anual indisponível ou com inconsistências nos valores informados.</td></tr>';
+
+    if(window.Chart && annualValid){
+      $("annual-balance-empty").hidden=true;
+      $("annual-movement-empty").hidden=true;
+      const years=annual.map(r=>String(r.year));
+      annualBalanceChart=new Chart($("annual-balance-chart"),{type:"bar",data:{labels:years,datasets:[{label:"Saldo de empregos",data:annual.map(r=>Number(r.balance)),backgroundColor:"#176b9b",borderRadius:3,maxBarThickness:48}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>"Saldo: "+fmt.format(ctx.parsed.y)+" vínculos"}}},scales:{y:{beginAtZero:true,grid:{color:"#edf1f3"},ticks:{callback:v=>fmt.format(v)}},x:{grid:{display:false}}}}});
+      annualMovementChart=new Chart($("annual-movement-chart"),{type:"bar",data:{labels:years,datasets:[{label:"Admissões",data:annual.map(r=>Number(r.admissions)),backgroundColor:"#176b9b",borderRadius:3},{label:"Desligamentos",data:annual.map(r=>Number(r.dismissals)),backgroundColor:"#f2b544",borderRadius:3}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:"bottom",labels:{usePointStyle:true,boxWidth:8}},tooltip:{callbacks:{label:ctx=>ctx.dataset.label+": "+fmt.format(ctx.parsed.y)+" vínculos"}}},scales:{y:{beginAtZero:true,grid:{color:"#edf1f3"},ticks:{callback:v=>fmt.format(v)}},x:{grid:{display:false}}}}});
+    } else {
+      $("annual-balance-empty").hidden=false;
+      $("annual-movement-empty").hidden=false;
+      const message=window.Chart?"Série anual indisponível ou inconsistente.":"Biblioteca de gráficos indisponível. A tabela anual permanece disponível.";
+      $("annual-balance-empty").innerHTML="<strong>"+message+"</strong>";
+      $("annual-movement-empty").innerHTML="<strong>"+message+"</strong>";
+    }
+
 
     const sectors = Array.isArray(payload.sectors) ? payload.sectors : [];
     const sectorTotals = sectors.reduce((acc,s)=>({admissions:acc.admissions+Number(s.admissions||0),dismissals:acc.dismissals+Number(s.dismissals||0),balance:acc.balance+Number(s.balance||0)}),{admissions:0,dismissals:0,balance:0});
