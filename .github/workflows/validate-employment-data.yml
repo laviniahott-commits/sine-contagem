@@ -44,5 +44,37 @@ jobs:
               assert stock is None or isinstance(stock, int), f"Estoque inválido em {row['period']}"
 
           assert periods == sorted(set(periods)), "Períodos devem estar ordenados e não podem se repetir"
-          print(f"JSON válido: {len(periods)} competência(s) verificadas.")
+
+          for index, row in enumerate(payload["data"]):
+              variation = row.get("relative_variation")
+              assert variation is None or isinstance(variation, (int, float)), f"Variação relativa inválida em {row['period']}"
+
+          annual = payload.get("annual_summary", [])
+          if annual:
+              years = [row.get("year") for row in annual]
+              assert years == sorted(set(years)), "Anos da série anual devem estar ordenados e sem duplicatas"
+              for row in annual:
+                  assert isinstance(row.get("year"), int), "Ano da série anual deve ser inteiro"
+                  for key in ("admissions", "dismissals", "balance", "stock"):
+                      assert isinstance(row.get(key), int), f"{key} inválido no ano {row.get('year')}"
+                  assert row["balance"] == row["admissions"] - row["dismissals"], f"Saldo anual inconsistente em {row['year']}"
+                  variation = row.get("relative_variation")
+                  assert variation is None or isinstance(variation, (int, float)), f"Variação anual inválida em {row['year']}"
+
+          sectors = payload.get("sectors", [])
+          if sectors:
+              assert periods, "Não é possível validar setores sem uma competência mensal"
+              latest = payload["data"][-1]
+              for row in sectors:
+                  assert isinstance(row.get("sector"), str) and row["sector"].strip(), "Setor sem identificação"
+                  for key in ("admissions", "dismissals", "balance"):
+                      assert isinstance(row.get(key), int), f"{key} inválido no setor {row.get('sector')}"
+                  assert row["balance"] == row["admissions"] - row["dismissals"], f"Saldo inconsistente no setor {row['sector']}"
+              for key in ("admissions", "dismissals", "balance"):
+                  assert sum(row[key] for row in sectors) == latest[key], f"Soma setorial não confere com o total municipal: {key}"
+
+          print(
+              f"JSON estruturalmente válido: {len(periods)} competência(s), "
+              f"{len(annual)} ano(s) e {len(sectors)} setor(es)."
+          )
           PY
