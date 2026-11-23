@@ -7,7 +7,7 @@
   let chart = null;
   let annualBalanceChart = null;
   let annualMovementChart = null;
-  const labels = {balance:"Saldo de empregos",admissions:"Admissões",dismissals:"Desligamentos",stock:"Estoque",relative_variation:"Variação relativa"};
+  const labels = {balance:"Saldo de empregos",admissions:"Admissões",dismissals:"Desligamentos",stock:"Estoque",relative_variation:"Variação relativa (%)"};
   const validNumber = value => value !== null && value !== undefined && value !== "" && Number.isFinite(Number(value));
   const display = value => validNumber(value) ? fmt.format(Number(value)) : "—";
   const monthLabel = value => {
@@ -39,6 +39,7 @@
       chart.data.datasets[0].label = labels[metric];
       chart.data.datasets[0].data = list.map(r=>validNumber(r[metric]) ? Number(r[metric]) : null);
       chart.data.labels = list.map(r=>monthLabel(r.period));
+      chart.options.scales.y.ticks.callback = value => fmt.format(value) + (metric === "relative_variation" ? "%" : "");
       chart.update();
     }
   };
@@ -84,7 +85,12 @@
 
     const sectors = Array.isArray(payload.sectors) ? payload.sectors : [];
     const sectorTotals = sectors.reduce((acc,s)=>({admissions:acc.admissions+Number(s.admissions||0),dismissals:acc.dismissals+Number(s.dismissals||0),balance:acc.balance+Number(s.balance||0)}),{admissions:0,dismissals:0,balance:0});
-    const sectorReference = rows[rows.length-1];
+    const latestMonth = rows[rows.length-1];
+    if(latestMonth){
+      const sign = Number(latestMonth.balance)>0 ? "+" : "";
+      $("latest-month-summary").innerHTML = "<strong>"+monthLabel(latestMonth.period)+":</strong> saldo de <strong>"+sign+display(latestMonth.balance)+"</strong> vínculos, com "+display(latestMonth.admissions)+" admissões e "+display(latestMonth.dismissals)+" desligamentos. Este resultado mensal não integra os gráficos anuais de 2021 a 2025.";
+    }
+    const sectorReference = latestMonth;
     const sectorValid = sectors.length>0 && !!sectorReference &&
       sectors.every(s=>s.sector && ["admissions","dismissals","balance"].every(k=>validNumber(s[k]) && Number(s[k])===Math.trunc(Number(s[k])) && Number(s[k])>=-Number.MAX_SAFE_INTEGER)) &&
       sectorTotals.admissions===Number(sectorReference.admissions) &&
@@ -94,7 +100,7 @@
 
     if(window.Chart){
       $("chart-empty").hidden=true;
-      chart = new Chart($("employment-chart"),{type:"line",data:{labels:rows.map(r=>monthLabel(r.period)),datasets:[{label:"Saldo de empregos",data:rows.map(r=>r.balance),borderColor:"#176b9b",backgroundColor:"rgba(23,107,155,.12)",fill:true,tension:.28,pointRadius:2,borderWidth:2}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{grid:{color:"#edf1f3"},ticks:{callback:v=>fmt.format(v)}},x:{grid:{display:false}}}}});
+      chart = new Chart($("employment-chart"),{type:"line",data:{labels:rows.map(r=>monthLabel(r.period)),datasets:[{label:"Saldo de empregos",data:rows.map(r=>r.balance),borderColor:"#176b9b",backgroundColor:"rgba(23,107,155,.12)",fill:true,tension:.28,pointRadius:2,borderWidth:2}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>ctx.dataset.label+": "+fmt.format(ctx.parsed.y)+(ctx.dataset.label.includes("(%)")?"%":" vínculos")}}},scales:{y:{grid:{color:"#edf1f3"},ticks:{callback:v=>fmt.format(v)}},x:{grid:{display:false}}}}});
     } else {
       $("chart-empty").hidden=false;
       $("chart-empty").innerHTML = "<strong>O gráfico não pôde ser carregado.</strong><span>Os indicadores e a tabela continuam disponíveis; tente recarregar a página para carregar a biblioteca do gráfico.</span>";
