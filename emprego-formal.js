@@ -99,12 +99,14 @@
       sectorTotals.balance===Number(sectorReference.balance);
     $("sector-table").innerHTML = sectorValid ? sectors.map(s=>"<tr><td>"+s.sector+"</td><td>"+display(s.admissions)+"</td><td>"+display(s.dismissals)+"</td><td class='"+(Number(s.balance)<0?"negative-balance":"positive-balance")+"'>"+(Number(s.balance)>0?"+":"")+display(s.balance)+"</td></tr>").join("") : '<tr><td colspan="4" class="empty-cell">Dados setoriais indisponíveis ou divergentes dos totais municipais.</td></tr>';
 
-    if(window.Chart){
+    if(window.Chart && rows.length >= 2){
       $("chart-empty").hidden=true;
       chart = new Chart($("employment-chart"),{type:"line",data:{labels:rows.map(r=>monthLabel(r.period)),datasets:[{label:"Saldo de empregos",data:rows.map(r=>r.balance),borderColor:"#176b9b",backgroundColor:"rgba(23,107,155,.12)",fill:true,tension:.28,pointRadius:2,borderWidth:2}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>ctx.dataset.label+": "+(ctx.dataset.label.includes("(%)")?fmtPercent.format(ctx.parsed.y)+"%":fmt.format(ctx.parsed.y)+" vínculos")}}},scales:{y:{grid:{color:"#edf1f3"},ticks:{callback:v=>fmt.format(v)}},x:{grid:{display:false}}}}});
     } else {
       $("chart-empty").hidden=false;
-      $("chart-empty").innerHTML = "<strong>O gráfico não pôde ser carregado.</strong><span>Os indicadores e a tabela continuam disponíveis; tente recarregar a página para carregar a biblioteca do gráfico.</span>";
+      $("chart-empty").innerHTML = !window.Chart
+        ? "<strong>O gráfico não pôde ser carregado.</strong><span>Os indicadores e a tabela continuam disponíveis; tente recarregar a página para carregar a biblioteca do gráfico.</span>"
+        : "<strong>Série mensal ainda insuficiente para mostrar uma evolução.</strong><span>Há apenas uma competência mensal carregada. Os indicadores e a tabela exibem esse resultado; o gráfico será ativado quando houver pelo menos dois meses de dados.</span>";
     }
     ["period-start","period-end","indicator-select"].forEach(id=>$(id).addEventListener("change",show));
     $("reset-filters").addEventListener("click",()=>{$("period-start").value=periods[0];$("period-end").value=periods[periods.length-1];$("indicator-select").value="balance";show();});
