@@ -18,3 +18,15 @@
 .positive-balance{color:#176b67;font-weight:700}
 .negative-balance{color:#a34b42;font-weight:700}
 @media(max-width:760px){.sector-card{padding:16px}}
+
+/* Rodapé institucional ampliado do painel */
+.footer-expanded{display:grid;grid-template-columns:1fr 2fr 1fr;align-items:start;gap:42px}
+.footer-team{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px 24px;margin-top:22px}
+.footer-team div{display:grid;gap:3px}
+.footer-team strong,.footer-social strong{font-size:11px;color:#fff}
+.footer-team span,.footer-social a,.footer-social span{font-size:10px;line-height:1.55;color:#9db2c0}
+.footer-social{display:grid;align-content:start;gap:12px}
+.footer-social a:hover{color:#f5c45e}
+.footer-author{margin-top:22px!important;font-size:10px!important}
+@media(max-width:760px){.footer-expanded{grid-template-columns:1fr;gap:28px}.footer-team{grid-template-columns:1fr 1fr}}
+@media(max-width:500px){.footer-team{grid-template-columns:1fr}}
