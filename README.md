@@ -33,4 +33,4 @@ O GitHub Actions verifica a estrutura do JSON, o código territorial, os períod
 
 ## Situação da integração
 
-A interface do painel está implementada. A série municipal ainda depende da extração e validação dos dados oficiais do Novo Caged. Até lá, os indicadores permanecem vazios intencionalmente.
+A interface do painel está implementada e o arquivo JSON já contém valores mensais, setoriais e anuais inseridos para desenvolvimento. Esses valores ainda precisam ser conferidos diretamente com os arquivos e relatórios oficiais do Novo Caged antes de serem tratados como série validada ou utilizados em divulgação institucional.
