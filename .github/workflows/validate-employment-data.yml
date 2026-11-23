@@ -9,6 +9,7 @@ on:
   pull_request:
     paths:
       - "data/emprego-formal.json"
+      - "scripts/process_novo_caged.py"
       - ".github/workflows/validate-employment-data.yml"
 
 jobs:
