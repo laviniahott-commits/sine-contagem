@@ -55,6 +55,11 @@
     $("period-start").value=periods[0];$("period-end").value=periods[periods.length-1];
     controls.forEach(id=>$(id).disabled=false);
     $("data-status").textContent = "Base carregada · " + (payload.reference || "período informado na fonte");
+    const sectors = Array.isArray(payload.sectors) ? payload.sectors : [];
+    const sectorTotals = sectors.reduce((acc,s)=>({admissions:acc.admissions+Number(s.admissions||0),dismissals:acc.dismissals+Number(s.dismissals||0),balance:acc.balance+Number(s.balance||0)}),{admissions:0,dismissals:0,balance:0});
+    const sectorValid = sectors.length>0 && sectors.every(s=>s.sector && ["admissions","dismissals","balance"].every(k=>validNumber(s[k]) && Number(s[k])===Math.trunc(Number(s[k])))) && sectorTotals.admissions===14778 && sectorTotals.dismissals===11872 && sectorTotals.balance===2906;
+    $("sector-table").innerHTML = sectorValid ? sectors.map(s=>"<tr><td>"+s.sector+"</td><td>"+display(s.admissions)+"</td><td>"+display(s.dismissals)+"</td><td class='"+(Number(s.balance)<0?"negative-balance":"positive-balance")+"'>"+(Number(s.balance)>0?"+":"")+display(s.balance)+"</td></tr>").join("") : '<tr><td colspan="4" class="empty-cell">Dados setoriais indisponíveis ou divergentes dos totais municipais.</td></tr>';
+
     if(window.Chart){
       $("chart-empty").hidden=true;
       chart = new Chart($("employment-chart"),{type:"line",data:{labels:rows.map(r=>monthLabel(r.period)),datasets:[{label:"Saldo de empregos",data:rows.map(r=>r.balance),borderColor:"#176b9b",backgroundColor:"rgba(23,107,155,.12)",fill:true,tension:.28,pointRadius:2,borderWidth:2}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{grid:{color:"#edf1f3"},ticks:{callback:v=>fmt.format(v)}},x:{grid:{display:false}}}}});
